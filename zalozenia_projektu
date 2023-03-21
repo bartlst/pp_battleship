@@ -1,0 +1,10 @@
+Nazwa projektu:
+Opis projektu:Turowa gra wieloosobowa inspirowana grą planszową w statki. Różnice względem oryginału:
+-W jednej potyczce gry brać udział może od 2 do 4 graczy
+-Plansza na której gracz rozmieszcza swoje maszyny bojowe generuje się losowo (może zawierać pola lądowe oraz pola morskie)
+-Potyczka zaczyna się wyborem jednostek (różne typy okrętów, pojazdów oraz stacji bojowych) które kosztują określoną punktów
+-Gracz ma ograniczoną liczbę ruchów na turę
+-Gracz może przemieszczać określone jednostki
+-Gracz atakuje pola innego gracza używając jednostek bojowych
+-Gracz podczas potyczki może użyć umiejętności specjalnych (np, radar, napalm)
+-Gracz przegrywa w momencie gdy na planszy nie ma dostępnych żadnych jednostek
