@@ -2,7 +2,7 @@ import socket
 from _thread import *
 import sys
 
-server = ""
+server = "192.168.54.108"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,7 +16,7 @@ s.listen(4) #hosts quantity
 print("Waiting for connection, Server Started")
 
 def threaded_client (conn):
-    
+    conn.send(str.encode("Connected"))
     reply = ""
     while True:
         try:
