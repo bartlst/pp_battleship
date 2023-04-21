@@ -1,49 +1,59 @@
 class Position:
-    x = None
-    y = None
-
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
 class Map:
     def __init__(self, width, height):
         self.map = []
-        for x in range(width):
-            for y in range(height):
-                Position.x = x
-                Position.y = y
+        for y in range(height):
+            row = []
+            for x in range(width):
+                position = Position(x,y)
                 occupied = False
-                temp_position = [Position, occupied]
-                self.map.append(temp_position)
+                battleship = None
+                temp_position = {
+                    "position": position,
+                    "occupied": occupied,
+                    "battleship": battleship
+                }
+                row.append(temp_position)
+            self.map.append(row)
 
-    def putBattleship(self,position, battleship):
-        """"Method that is responsible for putting new battleship on map. Method is checking if position is not occupied,
-        and then it change position of given battleship"""
-        #for loop that will check each position on map that battleship want take
+    def putBattleship(self, position, direction, battleship):
+        """"Method that is responsible for putting battleship on map. Method is checking if
+        position is not occupied, and then it change position of given battleship and in case of success returns true
+        and in case of failure returns False"""
         battleshipPosition = battleship.getPosition()
-        positionToCheck = Position
-        for y in range(battleshipPosition["height"]):
-            for x in range(battleshipPosition["width"]):
-                positionToCheck.x = position.x+x
-                positionToCheck.y = position.y+y
-                #if position is occupied -> return false if not keep checking
-                #after verification set all positions to occupied and set position of battleship
+        if direction != battleshipPosition["direction"]:
+            height = battleshipPosition["width"]
+            width = battleshipPosition["height"]
+        else:
+            width = battleshipPosition["width"]
+            height = battleshipPosition["height"]
 
+        for y in range(height):
+            if position.y+y not in range(0, len(self.map)): return False
+            row = self.map[position.y+y]
+            for x in range(width):
+                if position.x + x not in range(0, len(row)): return False
+                if row[position.x+x]["occupied"]:
+                    return False
 
-
-
-    def relocateBattleship(self,position, battleship):
-        #maybe this method could be deleted after modifying putBattleship method
-        return False
-        """"Method that is responsible for relocating battleship from current position to another.
-        Method is checking if position is not occupied,
-        and then it change position of given battleship, and releases previous position"""
-
+        for y in range(height):
+            row = self.map[position.y+y]
+            for x in range(width):
+                row[position.x+x]["occupied"] = True
+                row[position.x+x]["battleship"] = battleship
+        battleship.relocate(position, direction)
+        return True
 
 
 class Battleship:
 
     def __init__(self, healthPoints, imgRegular, imgDestroyed, width, height):
 
-        self.__position = Position()
+        self.__position = Position(0,0)
         self.__position.x = 0
         self.__position.y = 0
         self.__working = True
@@ -56,10 +66,10 @@ class Battleship:
         self.__width = width
         self.__height = height
 
-        self.__imgDisplayed = self.imgRegular
-        print(self.__healthPoints)
+        self.__imgDisplayed = self.__imgRegular
 
-        #additional for future development
+        #additional for future development \/
+
         #self.actionList #list of actions that could be used by this battleship
         #self.type #type of battleship e.g. ocean/land
         #self.damage #each battleship will be able to  shoot
@@ -67,15 +77,15 @@ class Battleship:
     def relocate(self, position, direction):
         """Method that is used to move battleship, it is taking new position and set battleship on it. Position is
         stored in x,y values which are the coordinates of the front of the ship
-        (upper left corner in horizontal position) """
+        (upper left corner in horizontal position)"""
         self.__position = position
         self.__direction = direction
 
     def takeDamage(self, damage):
         """"Method that is used to deduct damage form health points,
         if health points <= 0 method is setting destroyed image as primary and deactivates battleship"""
-        self.healthPoints -= damage
-        if self.healthPoints <= 0:
+        self.__healthPoints -= damage
+        if self.__healthPoints <= 0:
             self.__imgDisplayed = self.__imgDestroyed
             self.__working = False
 
@@ -102,15 +112,24 @@ class Battleship:
         """"Method returns health points of battleship"""
         return self.__healthPoints
 
-    def getSize(self):  #maybe this method could be deleted because of getPosition method
-        """"Method returns size of battleship"""
-        size ={
-            "width": self.__width,
-            "height": self.__height,
-        }
-        return size
 
-
-battleshipOne = Battleship(54, 0, 0, 0, 0)
+battleshipOne = Battleship(54, 0, 0, 3, 1)
+battleshipTwo = Battleship(54, 0, 0, 3, 1)
 mapOne = Map(10, 10)
+position = Position(2, 2)
+print(battleshipOne.getPosition()['position'].x, battleshipOne.getPosition()['position'].y)
 
+
+print(mapOne.putBattleship(position, "vertical", battleshipOne))
+print(battleshipOne.getPosition()['position'].x, battleshipOne.getPosition()['position'].y)
+
+print(battleshipOne.getPosition()['position'].x, battleshipOne.getPosition()['position'].y)
+
+print(battleshipOne.getHP())
+
+for row in mapOne.map:
+    for pos in row:
+        if pos["occupied"]:
+            print("x:", pos["position"].x, "y:", pos["position"].y, pos["occupied"], pos["battleship"].takeDamage(1))
+
+print(battleshipOne.getHP())
