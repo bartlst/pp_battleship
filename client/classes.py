@@ -3,6 +3,7 @@ class Position:
         self.x = x
         self.y = y
 
+
 class Map:
     def __init__(self, width, height):
         self.map = []
@@ -21,7 +22,7 @@ class Map:
             self.map.append(row)
 
     def putBattleship(self, position, direction, battleship):
-        """"Method that is responsible for putting battleship on map. Method is checking if
+        """Method that is responsible for putting battleship on map. Method is checking if
         position is not occupied, and then it change position of given battleship and in case of success returns true
         and in case of failure returns False"""
         battleshipPosition = battleship.getPosition()
@@ -47,6 +48,11 @@ class Map:
                 row[position.x+x]["battleship"] = battleship
         battleship.relocate(position, direction)
         return True
+
+    def method(self, pos, damage):
+        #check gieven position and check if on this position there is a battleship if there is bttleship.takedamage()
+        #it could returns true or false
+        return False
 
 
 class Battleship:
@@ -114,16 +120,10 @@ class Battleship:
 
 
 battleshipOne = Battleship(54, 0, 0, 3, 1)
-battleshipTwo = Battleship(54, 0, 0, 3, 1)
 mapOne = Map(10, 10)
 position = Position(2, 2)
-print(battleshipOne.getPosition()['position'].x, battleshipOne.getPosition()['position'].y)
 
-
-print(mapOne.putBattleship(position, "vertical", battleshipOne))
-print(battleshipOne.getPosition()['position'].x, battleshipOne.getPosition()['position'].y)
-
-print(battleshipOne.getPosition()['position'].x, battleshipOne.getPosition()['position'].y)
+mapOne.putBattleship(position, "horizontal", battleshipOne)
 
 print(battleshipOne.getHP())
 
