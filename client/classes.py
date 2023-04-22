@@ -21,6 +21,7 @@ class Map:
                 row.append(temp_position)
             self.map.append(row)
 
+# TODO define method attack on a position
     def putBattleship(self, position, direction, battleship):
         """Method that is responsible for putting battleship on map. Method is checking if
         position is not occupied, and then it change position of given battleship and in case of success returns true

@@ -40,6 +40,7 @@ def main_menu():
         if PLAY_BUTTON.detection():
             print('PLAY')
             play_menu()
+
         if SETTINGS_BUTTON.detection():
             print('SETTINGS')
 
