@@ -67,7 +67,7 @@ def play_menu():
     play_menu_state = True
     CONNECT_BUTTON = gui.Button((50, screen.get_height() / 2.3), screen.get_width() - 100, 70, '#48a302', 'CONNECT')
     BACK_BUTTON = gui.Button((50, screen.get_height()/1.5), screen.get_width()-100, 70, '#48a302', 'BACK')
-    IP_input_box = gui.InputBox(0,0,1,40)
+    IP_input_box = gui.InputBox(0,0,1,40) #TODO do renowacji
     while play_menu_state:
         screen.fill((255, 000, 000))
 

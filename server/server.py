@@ -5,7 +5,8 @@ import pickle
 from _thread import *
 
 HEADER = 64
-IPADDR = socket.gethostbyname(socket.gethostname())
+#IPADDR = socket.gethostbyname(socket.gethostname())
+IPADDR = '88.220.118.173'
 CONFIG = json.load(open('config.json'))
 FORMAT = 'utf-8'
 DISCONNECTED_MSG = '!DISCONNECTED'

@@ -4,8 +4,7 @@ import classes
 
 #
 HEADER = 64
-#SERVERIP = "192.168.68.105"
-SERVERIP = socket.gethostbyname(socket.gethostname())
+SERVERIP = "192.168.0.37"
 FORMAT = 'utf-8'
 DISCONNECTED_MSG = '!DISCONNECTED'
 PORT = 5550

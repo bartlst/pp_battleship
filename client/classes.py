@@ -88,6 +88,9 @@ class Battleship:
         self.__position = position
         self.__direction = direction
 
+        #TODO
+        # 1. if direction != __direction then image rotate
+
     def takeDamage(self, damage):
         """"Method that is used to deduct damage form health points,
         if health points <= 0 method is setting destroyed image as primary and deactivates battleship"""
