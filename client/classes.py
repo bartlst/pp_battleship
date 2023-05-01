@@ -1,3 +1,8 @@
+class communication:
+    def __init__(self, packet_type, data):
+        self.packet_type = packet_type
+        self.data = data
+
 class Position:
     def __init__(self, x, y):
         self.x = x
@@ -21,7 +26,6 @@ class Map:
                 row.append(temp_position)
             self.map.append(row)
 
-# TODO define method attack on a position
     def putBattleship(self, position, direction, battleship):
         """Method that is responsible for putting battleship on map. Method is checking if
         position is not occupied, and then it change position of given battleship and in case of success returns true
@@ -50,9 +54,9 @@ class Map:
         battleship.relocate(position, direction)
         return True
 
-    def method(self, pos, damage):
-        #check gieven position and check if on this position there is a battleship if there is bttleship.takedamage()
-        #it could returns true or false
+    def attacOnPosition(self, pos, damage):
+        if self.map[pos.y][pos.x]["occupied"]:
+            self.map[pos.y][pos.x]["battleship"].takeDamage(damage)
         return False
 
 
@@ -126,14 +130,9 @@ class Battleship:
 battleshipOne = Battleship(54, 0, 0, 3, 1)
 mapOne = Map(10, 10)
 position = Position(2, 2)
-
 mapOne.putBattleship(position, "horizontal", battleshipOne)
 
 print(battleshipOne.getHP())
-
-for row in mapOne.map:
-    for pos in row:
-        if pos["occupied"]:
-            print("x:", pos["position"].x, "y:", pos["position"].y, pos["occupied"], pos["battleship"].takeDamage(1))
+mapOne.attacOnPosition(position, 1)
 
 print(battleshipOne.getHP())

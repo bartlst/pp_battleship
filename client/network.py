@@ -2,9 +2,15 @@ import socket
 import pickle
 import classes
 
-#
+DISCONNECTED_MSG = '!DISCONNECTED'
+CONNECTING_MSG = '!CONNECTING'
+SENDING_MAP_MSG = '!SEND_MAP'
+ATTACK_MSG = '!ATTACK'
+
+
 HEADER = 64
-SERVERIP = "192.168.0.37"
+#SERVERIP = "192.168.68.105"
+SERVERIP = socket.gethostbyname(socket.gethostname())
 FORMAT = 'utf-8'
 DISCONNECTED_MSG = '!DISCONNECTED'
 PORT = 5550
@@ -33,10 +39,28 @@ class Network:
 # TODO check len of information and send to server
 # TODO pickle the information and send it to server
 
-p = classes.Position(5, 5)
+battleshipOne = classes.Battleship(54, 0, 0, 3, 1)
+mapOne = classes.Map(10, 10)
+position = classes.Position(2, 2)
+
+mapOne.putBattleship(position, "horizontal", battleshipOne)
 n = Network()
 
 
-n.send("hello")
-n.send(DISCONNECTED_MSG)
 
+
+nickName = input("Wprowadz swoj nick: ")
+
+msg = classes.communication(CONNECTING_MSG, nickName)
+n.send(msg)
+msg = classes.communication(SENDING_MAP_MSG, mapOne)
+n.send(msg)
+x = input()
+if x == "":
+    dic = {
+        "position": position,
+        "attackedPlayer": "Alfred"
+    }
+    msg = classes.communication(ATTACK_MSG, dic)
+    n.send(msg)
+x = input("czekej")
