@@ -6,6 +6,7 @@ DISCONNECTED_MSG = '!DISCONNECTED'
 CONNECTING_MSG = '!CONNECTING'
 SENDING_MAP_MSG = '!SEND_MAP'
 ATTACK_MSG = '!ATTACK'
+READINESS_MSG = '!READINESS_STATE'
 
 
 HEADER = 64
@@ -55,12 +56,15 @@ msg = classes.communication(CONNECTING_MSG, nickName)
 n.send(msg)
 msg = classes.communication(SENDING_MAP_MSG, mapOne)
 n.send(msg)
-x = input()
-if x == "":
-    dic = {
-        "position": position,
-        "attackedPlayer": "Alfred"
-    }
-    msg = classes.communication(ATTACK_MSG, dic)
-    n.send(msg)
-x = input("czekej")
+x = input("..")
+msg = classes.communication(READINESS_MSG, True)
+n.send(msg)
+x = input("..")
+msg = classes.communication(READINESS_MSG, False)
+n.send(msg)
+x = input("..")
+msg = classes.communication(READINESS_MSG, True)
+n.send(msg)
+x = input("..")
+msg = classes.communication(READINESS_MSG, False)
+n.send(msg)

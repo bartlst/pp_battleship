@@ -2,14 +2,17 @@ import socket
 import json
 import threading
 import pickle
+import time
 import classes
 from _thread import *
 
 
 class Player:
-    def __init__(self, nick):
+    def __init__(self, nick, connection_chanel):
         self.nick = nick
+        self.connection_chanel = connection_chanel
         self.map = None
+        self.readiness = False
 
 
 HEADER = 64
@@ -23,12 +26,13 @@ DISCONNECTED_MSG = '!DISCONNECTED'
 CONNECTING_MSG = '!CONNECTING'
 SENDING_MAP_MSG = '!SEND_MAP'
 ATTACK_MSG = '!ATTACK'
+READINESS_MSG = '!READINESS_STATE'
 
 GAME_STATE = 0
 #0 - lobby (server waiting for players)
 #1 - setting up the map (server waiting for players to send thier maps)
-#3 - game is running (players can send attack actions)
-
+#2 - game is running (players can send attack actions)
+PLAYMAKER = None
 playersList = []
 socketInterface = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 socketInterface.bind((IPADDR, PORT))
@@ -50,8 +54,8 @@ def threaded_client(conn, addr):
             msg = pickle.loads(msg)
             print(f"[{addr[0]}] {msg.packet_type}")
 
-            if msg.packet_type == CONNECTING_MSG and player==None:
-                player = Player(msg.data)
+            if msg.packet_type == CONNECTING_MSG and player == None and GAME_STATE == 0:
+                player = Player(msg.data, conn)
                 playersList.append(player)
                 for p in playersList:
                     print(p.nick)
@@ -61,11 +65,17 @@ def threaded_client(conn, addr):
                 connected = False
                 playersList.remove(player)
 
+            elif msg.packet_type == READINESS_MSG:
+                player.readiness = msg.data
+                if player.readiness:
+                    print(f"Player {player.nick} is ready to play")
+                else:
+                    print(f"Player {player.nick} is not ready to play")
             elif msg.packet_type == SENDING_MAP_MSG:
                 print(f"Player {player.nick} send a map")
                 player.map = msg.data
 
-            elif msg.packet_type == ATTACK_MSG:
+            elif msg.packet_type == ATTACK_MSG and PLAYMAKER == player and GAME_STATE == 2:
                 print(f"Player {player.nick} attacked position {msg.data['position'].x, msg.data['position'].y} on "
                       f"{msg.data['attackedPlayer']}'s map")
                 for player in playersList:
@@ -78,11 +88,33 @@ def threaded_client(conn, addr):
     conn.close()
 
 def threaded_game():
-    if GAME_STATE == 0:
+    global GAME_STATE
+    while True:
+        if GAME_STATE == 0:
+            ready_players = 0
+            for player in playersList:
+                if player.readiness:
+                    ready_players += 1
+                else:
+                    ready_players -= 1
 
-    elif GAME_STATE == 1:
+            if ready_players == len(playersList) and len(playersList) > 1:
+                print(f"All {ready_players} players are ready!")
+                if (round(time.time())-player_readiness_time) >= 5:
+                    GAME_STATE = 1
+                    print("GAME IS STARTING...")
+            else:
+                player_readiness_time = round(time.time())
 
-    elif GAME_STATE == 2:
+        elif GAME_STATE == 1:
+            print(GAME_STATE)
+            break
+        elif GAME_STATE == 2:
+            print(GAME_STATE)
+
+#def send_to_all(msg):
+
+
 
 # Function is waiting for players to join the lobby and set ready state, if all players are ready for 5 sec
 # then game will start
@@ -97,9 +129,11 @@ def threaded_game():
 def serverStart():
     print("[Server Started] Waiting for connection...")
     socketInterface.listen()
+    game_thread = threading.Thread(target=threaded_game)
+    game_thread.start()
     while True:
         conn, addr = socketInterface.accept()
-        thread = threading.Thread(target=threaded_client, args=(conn, addr))
-        thread.start()
+        player_thread = threading.Thread(target=threaded_client, args=(conn, addr))
+        player_thread.start()
 
 serverStart()
