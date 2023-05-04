@@ -1,12 +1,18 @@
 import socket
 import pickle
 import classes
+import threading
 
+#type of message
 DISCONNECTED_MSG = '!DISCONNECTED'
 CONNECTING_MSG = '!CONNECTING'
 SENDING_MAP_MSG = '!SEND_MAP'
 ATTACK_MSG = '!ATTACK'
 READINESS_MSG = '!READINESS_STATE'
+BATTLESHIP_PUL_MSG = '!BATTLESHIP_PUL'
+TIME_LEFT_MSG = '!TIME'
+GAME_INFO_MSG = '!GAME_INFO'
+
 
 
 HEADER = 64
@@ -15,13 +21,16 @@ SERVERIP = socket.gethostbyname(socket.gethostname())
 FORMAT = 'utf-8'
 DISCONNECTED_MSG = '!DISCONNECTED'
 PORT = 5550
-
-# TODO create a class that will be containing all of needed information about game that client will be sending to server
+# TODO add description to each function/method
+# TODO add comments
 class Network:
     def __init__(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.addr = (SERVERIP, PORT)
         self.client.connect(self.addr)
+        recive_thread = threading.Thread(target=self.recive)
+        recive_thread.start()
+
     
     def send(self, data):
 
@@ -33,12 +42,17 @@ class Network:
         self.client.send(message)
 
     def recive(self):
-        pass
+        print("receiving ON")
+        while True:
+            msg_length = self.client.recv(HEADER).decode(FORMAT)
+            if msg_length:
+                msg_length = int(msg_length)
+                msg = self.client.recv(msg_length)
+                msg = pickle.loads(msg)
+                print(f"[SERVER] {msg.data}")
 
 
 
-# TODO check len of information and send to server
-# TODO pickle the information and send it to server
 
 battleshipOne = classes.Battleship(54, 0, 0, 3, 1)
 mapOne = classes.Map(10, 10)
@@ -54,17 +68,10 @@ nickName = input("Wprowadz swoj nick: ")
 
 msg = classes.communication(CONNECTING_MSG, nickName)
 n.send(msg)
+x = input("Ready")
+msg = classes.communication(READINESS_MSG, True)
+n.send(msg)
+x = input("Map")
 msg = classes.communication(SENDING_MAP_MSG, mapOne)
 n.send(msg)
-x = input("..")
-msg = classes.communication(READINESS_MSG, True)
-n.send(msg)
-x = input("..")
-msg = classes.communication(READINESS_MSG, False)
-n.send(msg)
-x = input("..")
-msg = classes.communication(READINESS_MSG, True)
-n.send(msg)
-x = input("..")
-msg = classes.communication(READINESS_MSG, False)
-n.send(msg)
+
