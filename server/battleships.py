@@ -28,7 +28,12 @@ battleshipTypes = {
     "fourFreighter": createFourFreighter(),
 }
 
-battleships_pul = []
+battleships_pul = [
+    battleshipTypes["oneFreighter"],
+    battleshipTypes["twoFreighter"],
+    battleshipTypes["threeFreighter"],
+    battleshipTypes["fourFreighter"]
+]
 
 
 

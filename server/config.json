@@ -1,4 +1,7 @@
 {
   "slots_quantity": 4,
-  "port": 5555
+  "port": 5555,
+  "map_width" : 10,
+  "map_height" : 10,
+  "round_time_min": 3
 }

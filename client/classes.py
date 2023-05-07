@@ -64,7 +64,7 @@ class Battleship:
 
     def __init__(self, healthPoints, imgRegular, imgDestroyed, width, height):
 
-        self.__position = Position(0,0)
+        self.__position = Position(0, 0)
         self.__position.x = 0
         self.__position.y = 0
         self.__working = True
