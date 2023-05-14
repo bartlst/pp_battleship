@@ -3,6 +3,7 @@ class communication:
         self.packet_type = packet_type
         self.data = data
 
+
 class Position:
     def __init__(self, x, y):
         self.x = x
@@ -12,16 +13,19 @@ class Position:
 class Map:
     def __init__(self, width, height):
         self.map = []
+        self.battleships_array = []
         for y in range(height):
             row = []
             for x in range(width):
-                position = Position(x,y)
+                position = Position(x, y)
                 occupied = False
                 battleship = None
+                attacked = False
                 temp_position = {
                     "position": position,
                     "occupied": occupied,
-                    "battleship": battleship
+                    "battleship": battleship,
+                    "attacked": attacked
                 }
                 row.append(temp_position)
             self.map.append(row)
@@ -39,31 +43,60 @@ class Map:
             height = battleshipPosition["height"]
 
         for y in range(height):
-            if position.y+y not in range(0, len(self.map)): return False
-            row = self.map[position.y+y]
+            if position.y + y not in range(0, len(self.map)): return False
+            row = self.map[position.y + y]
             for x in range(width):
                 if position.x + x not in range(0, len(row)): return False
-                if row[position.x+x]["occupied"]:
+                if row[position.x + x]["occupied"]:
                     return False
 
         for y in range(height):
-            row = self.map[position.y+y]
+            row = self.map[position.y + y]
             for x in range(width):
-                row[position.x+x]["occupied"] = True
-                row[position.x+x]["battleship"] = battleship
+                row[position.x + x]["occupied"] = True
+                row[position.x + x]["battleship"] = battleship
         battleship.relocate(position, direction)
+        if not battleship in self.battleships_array:
+            self.battleships_array.append(battleship)
         return True
 
     def attacOnPosition(self, pos, damage):
+        self.map[pos.y][pos.x]["attacked"] = True
         if self.map[pos.y][pos.x]["occupied"]:
             self.map[pos.y][pos.x]["battleship"].takeDamage(damage)
+            return True
         return False
+
+    def battleships_hp(self):
+        total_hp = 0
+        for battleship in self.battleships_array:
+            total_hp += battleship.getHP()
+        return total_hp
+
+    def get_blank_map(self):
+        blank_map = []
+        for map_row in self.map:
+            row = []
+            for map_position in map_row:
+                position = map_position["position"]
+                occupied = False
+                battleship = None
+                attacked = map_position["attacked"]
+                temp_position = {
+                    "position": position,
+                    "occupied": occupied,
+                    "battleship": battleship,
+                    "attacked": attacked
+                }
+                row.append(temp_position)
+            blank_map.append(row)
+        return blank_map
 
 
 class Battleship:
 
-    def __init__(self, healthPoints, imgRegular, imgDestroyed, width, height):
-
+    def __init__(self, healthPoints, imgRegular, imgDestroyed, width, height, name=""):
+        self.name = name
         self.__position = Position(0, 0)
         self.__position.x = 0
         self.__position.y = 0
@@ -79,11 +112,11 @@ class Battleship:
 
         self.__imgDisplayed = self.__imgRegular
 
-        #additional for future development \/
+        # additional for future development \/
 
-        #self.actionList #list of actions that could be used by this battleship
-        #self.type #type of battleship e.g. ocean/land
-        #self.damage #each battleship will be able to  shoot
+        # self.actionList #list of actions that could be used by this battleship
+        # self.type #type of battleship e.g. ocean/land
+        # self.damage #each battleship will be able to  shoot
 
     def relocate(self, position, direction):
         """Method that is used to move battleship, it is taking new position and set battleship on it. Position is
@@ -92,7 +125,7 @@ class Battleship:
         self.__position = position
         self.__direction = direction
 
-        #TODO
+        # TODO
         # 1. if direction != __direction then image rotate
 
     def takeDamage(self, damage):
@@ -114,7 +147,7 @@ class Battleship:
     def getPosition(self):
         """"Method returns information in dictionary about position of battleship
         (position, width, height, direction)"""
-        position= {
+        position = {
             "position": self.__position,
             "width": self.__width,
             "height": self.__height,
@@ -127,12 +160,3 @@ class Battleship:
         return self.__healthPoints
 
 
-battleshipOne = Battleship(54, 0, 0, 3, 1)
-mapOne = Map(10, 10)
-position = Position(2, 2)
-mapOne.putBattleship(position, "horizontal", battleshipOne)
-
-print(battleshipOne.getHP())
-mapOne.attacOnPosition(position, 1)
-
-print(battleshipOne.getHP())

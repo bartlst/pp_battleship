@@ -3,5 +3,6 @@
   "port": 5555,
   "map_width" : 10,
   "map_height" : 10,
-  "round_time_min": 3
+  "round_time_min": 2,
+  "preparation_room_time_min": 1
 }
