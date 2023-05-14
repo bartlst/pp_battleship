@@ -129,7 +129,7 @@ def start():
     game = GAME()
     display = None
     while not game.connected:
-        server_ip = "192.168.158.219" #input("Input server ip address: ")
+        server_ip = input("Input server ip address: ")
         player_nick = input("Input nickname: ")
         game.connect_to_server(server_ip, player_nick)
 
@@ -153,7 +153,6 @@ def start():
                     message = classes.communication(READINESS_MSG, None)
                     game.network_communication.send(message)
                     game.reset_input()
-
             elif server_data["SERVER_info"]["game_state"] == 1:
                 os.system('cls')
                 print("[PREPARATION ROOM]")

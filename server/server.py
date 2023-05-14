@@ -89,7 +89,7 @@ def threaded_client(conn, addr):
                 print(f"Player {player.nick} send a map")
                 player.map = msg.data
 
-            elif msg.packet_type == ATTACK_MSG and GAME_STATE == 2:
+            elif msg.packet_type == ATTACK_MSG:
                 print(f"Player {player.nick} attacked position {msg.data['position'].x, msg.data['position'].y} on "
                       f"{msg.data['attackedPlayer']}'s map")
                 ROUND_FINISHED = True
