@@ -89,7 +89,7 @@ def threaded_client(conn, addr):
                 print(f"Player {player.nick} send a map")
                 player.map = msg.data
 
-            elif msg.packet_type == ATTACK_MSG:
+            elif msg.packet_type == ATTACK_MSG and playersList[PLAYMAKER] == player:
                 print(f"Player {player.nick} attacked position {msg.data['position'].x, msg.data['position'].y} on "
                       f"{msg.data['attackedPlayer']}'s map")
                 ROUND_FINISHED = True
@@ -165,7 +165,7 @@ def threaded_game():
                         print(print_row)
                 GAME_STATE = 2
                 round_time_left = round(time.time())
-                PLAYMAKER = playersList[0]
+                PLAYMAKER = 0
             message_data = {"map_width": CONFIG["map_width"],
                             "map_height": CONFIG["map_height"],
                             "battleship_pul": battleships.battleships_pul,
@@ -187,7 +187,7 @@ def threaded_game():
             for player in active_players:
                 enemy_players = []
                 playmaker_info = False
-                if PLAYMAKER == player:
+                if playersList[PLAYMAKER] == player:
                     playmaker_info = True
                 for enemy in active_players:
                     if enemy != player:
@@ -203,12 +203,11 @@ def threaded_game():
                 send_msg(player, message)
 
             if time_left <= 0 or ROUND_FINISHED:
-                playmaker_index = playersList.index(PLAYMAKER)
-                if playmaker_index == (len(playersList)-1):
-                    PLAYMAKER = playersList[0]
+                if PLAYMAKER == (len(playersList)-1):
+                    PLAYMAKER = 0
                 else:
-                    PLAYMAKER = playersList[playmaker_index + 1]
-                print(f'New playmaker {PLAYMAKER.nick}')
+                    PLAYMAKER += 1
+                print(f'New playmaker {playersList[PLAYMAKER].nick}')
                 round_time_left = round(time.time())
                 ROUND_FINISHED = False
 
