@@ -16,6 +16,7 @@ class Player:
         self.map = None
         self.readiness = False
         self.active = True
+        self.round_finished = False
 
 
 HEADER = 64
@@ -89,7 +90,7 @@ def threaded_client(conn, addr):
                 print(f"Player {player.nick} send a map")
                 player.map = msg.data
 
-            elif msg.packet_type == ATTACK_MSG and playersList[PLAYMAKER] == player:
+            elif msg.packet_type == ATTACK_MSG:
                 print(f"Player {player.nick} attacked position {msg.data['position'].x, msg.data['position'].y} on "
                       f"{msg.data['attackedPlayer']}'s map")
                 ROUND_FINISHED = True
@@ -175,6 +176,7 @@ def threaded_game():
 
         elif GAME_STATE == 2:
             round_time_limit = CONFIG["round_time_min"]
+            print(PLAYMAKER)
             time_left = round((round_time_left + 60 * round_time_limit - round(time.time())) / 60, 1)
             active_players = []
             #print(time_left)
@@ -202,15 +204,17 @@ def threaded_game():
                 message = classes.communication(GAME_INFO_MSG, message_data)
                 send_msg(player, message)
 
-            if time_left <= 0 or ROUND_FINISHED:
+            if time_left <= 0:
+                ROUND_FINISHED = True
+
+            if ROUND_FINISHED:
+                ROUND_FINISHED = False
                 if PLAYMAKER == (len(playersList)-1):
                     PLAYMAKER = 0
                 else:
-                    PLAYMAKER += 1
+                   PLAYMAKER += 1
                 print(f'New playmaker {playersList[PLAYMAKER].nick}')
                 round_time_left = round(time.time())
-                ROUND_FINISHED = False
-
         # TODO for each time sent to all players game state
         message_data = {
             "game_state": GAME_STATE,
